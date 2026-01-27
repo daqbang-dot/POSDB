@@ -23,9 +23,17 @@ body {
     height: 100vh;
     position: fixed;
     padding: 20px;
-display: flex;
+    display: flex;
     flex-direction: column;
-    overflow-y: auto; 
+    z-index: 10;
+    overflow-y: auto; /* Allows scrolling on short mobile screens */
+}
+
+/* Add this to keep inputs tidy */
+.company-settings input, .company-settings textarea {
+    width: 100%;
+    box-sizing: border-box; /* Prevents horizontal overflow */
+    border: 1px solid #334155;
 }
 
 .sidebar h2 {
