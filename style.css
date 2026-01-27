@@ -150,3 +150,7 @@ th {
     gap: 10px;
     margin-top: 10px;
 }
+.btn-sm.secondary {
+    background-color: #64748b;
+    color: white;
+}
