@@ -58,7 +58,10 @@
         <div class="modal-overlay" onclick="closeModal()"></div> 
         <div class="modal-content">
             <h3>Create New Quotation</h3>
-            <input type="text" id="clientName" placeholder="Client Name">
+            <select id="clientName">
+    <option value="">-- Select Client --</option>
+    </select>
+
             <input type="text" id="itemName" placeholder="Item/Service Name">
             <input type="number" id="itemPrice" placeholder="Price">
             <div class="modal-actions">
