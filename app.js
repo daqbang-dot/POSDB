@@ -139,3 +139,38 @@ function openModal() { document.getElementById('docModal').style.display = 'flex
 function closeModal() { document.getElementById('docModal').style.display = 'none'; }
 
 renderTable();
+function saveData() {
+    localStorage.setItem('myDocs', JSON.stringify(documents));
+    localStorage.setItem('myInv', JSON.stringify(inventory));
+    localStorage.setItem('myClients', JSON.stringify(clients)); // Add this
+    renderTable();
+}
+function renderClients() {
+    const clientContainer = document.getElementById('clients'); // Matches the ID in your HTML
+    if (!clientContainer) return;
+
+    clientContainer.innerHTML = `
+        <h1>Client Database</h1>
+        <div class="table-container" style="margin-top: 20px;">
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
+                </thead>
+                <tbody>
+                    ${clients.map(c => `
+                        <tr><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td></tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// Update showSection to handle clients
+function showSection(sectionId) {
+    document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
+    document.getElementById(sectionId).style.display = 'block';
+    
+    if (sectionId === 'inventory') renderInventory();
+    if (sectionId === 'clients') renderClients(); // Add this line
+}
