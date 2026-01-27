@@ -23,21 +23,14 @@
                 <h1>Recent Documents</h1>
                 <button class="btn-primary" onclick="openModal()">+ Create Quotation</button>
             </header>
-            
             <div class="table-container">
                 <table id="docTable">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>ID</th>
-                            <th>Client</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th>Date</th><th>ID</th><th>Client</th><th>Type</th><th>Status</th><th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="docListBody">
-                        </tbody>
+                    <tbody id="docListBody"></tbody>
                 </table>
             </div>
         </section>
@@ -49,40 +42,40 @@
         </section>
         
         <section id="clients" style="display:none;">
-    <header style="display: flex; justify-content: space-between; align-items: center;">
-        <h1>Client Database</h1>
-        <button class="btn-primary" onclick="alert('Client adding feature coming next!')">+ Add New Client</button>
-    </header>
-    <div id="clientList"></div> </section>
-
+            <header style="display: flex; justify-content: space-between; align-items: center;">
+                <h1>Client Database</h1>
+                <button class="btn-primary" onclick="openClientModal()">+ Add New Client</button>
+            </header>
+            <div id="clientList"></div> 
+        </section>
     </main>
 
     <div id="docModal" class="modal" style="display:none;">
-<div id="clientModal" class="modal" style="display:none;">
-    <div class="modal-overlay" onclick="closeClientModal()"></div> 
-    <div class="modal-content">
-        <h3>Add New Client</h3>
-        <input type="text" id="newClientName" placeholder="Company Name">
-        <input type="email" id="newClientEmail" placeholder="Email Address">
-        <input type="text" id="newClientPhone" placeholder="Phone Number">
-        <div class="modal-actions">
-            <button class="btn-primary" onclick="addNewClient()">Save Client</button>
-            <button onclick="closeClientModal()">Cancel</button>
-        </div>
-    </div>
-</div>
         <div class="modal-overlay" onclick="closeModal()"></div> 
         <div class="modal-content">
             <h3>Create New Quotation</h3>
             <select id="clientName">
-    <option value="">-- Select Client --</option>
-    </select>
-
+                <option value="">-- Select Client --</option>
+            </select>
             <input type="text" id="itemName" placeholder="Item/Service Name">
             <input type="number" id="itemPrice" placeholder="Price">
             <div class="modal-actions">
                 <button class="btn-primary" onclick="createNewQuote()">Save Quotation</button>
                 <button onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="clientModal" class="modal" style="display:none;">
+        <div class="modal-overlay" onclick="closeClientModal()"></div> 
+        <div class="modal-content">
+            <h3>Add New Client</h3>
+            <input type="text" id="newClientName" placeholder="Company Name">
+            <input type="email" id="newClientEmail" placeholder="Email Address">
+            <input type="text" id="newClientPhone" placeholder="Phone Number">
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="addNewClient()">Save Client</button>
+                <button onclick="closeClientModal()">Cancel</button>
             </div>
         </div>
     </div>
