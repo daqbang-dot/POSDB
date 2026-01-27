@@ -327,3 +327,37 @@ function filterTable() {
         `;
     });
 }
+function updatePriceFromInventory() {
+    const selectedItemName = document.getElementById('itemSelect').value;
+    const qty = parseFloat(document.getElementById('itemQty').value) || 1;
+    const itemData = inventory.find(i => i.name === selectedItemName);
+    
+    if (itemData) {
+        // Calculation: Unit Price * Quantity
+        const totalPrice = itemData.price * qty;
+        document.getElementById('itemPrice').value = totalPrice.toFixed(2);
+    }
+}
+
+function createNewQuote() {
+    const client = document.getElementById('clientName').value;
+    const itemName = document.getElementById('itemSelect').value;
+    const qty = document.getElementById('itemQty').value;
+    const totalPrice = document.getElementById('itemPrice').value;
+
+    if(!client || !itemName) return alert("Please select a client and item");
+
+    const newDoc = {
+        id: 'QT-' + Math.floor(Math.random() * 1000),
+        date: new Date().toLocaleDateString(),
+        clientName: client,
+        type: 'Quotation',
+        status: 'Pending',
+        // We store the quantity in the description for the printout
+        items: [{ name: `${itemName} (x${qty})`, price: totalPrice }]
+    };
+
+    documents.push(newDoc);
+    saveData();
+    closeModal();
+}
