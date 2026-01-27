@@ -328,14 +328,24 @@ function filterTable() {
     });
 }
 function updatePriceFromInventory() {
-    const selectedItemName = document.getElementById('itemSelect').value;
-    const qty = parseFloat(document.getElementById('itemQty').value) || 1;
+    const itemSelect = document.getElementById('itemSelect');
+    const qtyInput = document.getElementById('itemQty');
+    const priceInput = document.getElementById('itemPrice');
+
+    // Get values
+    const selectedItemName = itemSelect.value;
+    const qty = parseFloat(qtyInput.value) || 0; 
+    
+    // Find the item in your inventory array
     const itemData = inventory.find(i => i.name === selectedItemName);
     
     if (itemData) {
-        // Calculation: Unit Price * Quantity
-        const totalPrice = itemData.price * qty;
-        document.getElementById('itemPrice').value = totalPrice.toFixed(2);
+        // The Math: Unit Price x Quantity
+        const total = itemData.price * qty;
+        priceInput.value = total.toFixed(2); 
+    } else {
+        // If no item is selected, clear the price
+        priceInput.value = "";
     }
 }
 
@@ -345,19 +355,25 @@ function createNewQuote() {
     const qty = document.getElementById('itemQty').value;
     const totalPrice = document.getElementById('itemPrice').value;
 
-    if(!client || !itemName) return alert("Please select a client and item");
+    // VALIDATION: This prevents the "dead" save button issue
+    if(!client || !itemName || !totalPrice || totalPrice <= 0) {
+        return alert("Please select a client, an item, and ensure Quantity is at least 1.");
+    }
 
     const newDoc = {
-        id: 'QT-' + Math.floor(Math.random() * 1000),
+        id: 'QT-' + Math.floor(Math.random() * 9000 + 1000), 
         date: new Date().toLocaleDateString(),
         clientName: client,
         type: 'Quotation',
         status: 'Pending',
-        // We store the quantity in the description for the printout
+        // This stores it cleanly for the 'Print' function later
         items: [{ name: `${itemName} (x${qty})`, price: totalPrice }]
     };
 
     documents.push(newDoc);
-    saveData();
+    saveData(); 
     closeModal();
+    
+    // Reset Qty field to 1 for the next use
+    if(document.getElementById('itemQty')) document.getElementById('itemQty').value = "1";
 }
