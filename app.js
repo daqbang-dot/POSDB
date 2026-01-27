@@ -14,16 +14,13 @@ function saveData() {
     localStorage.setItem('myDocs', JSON.stringify(documents));
     localStorage.setItem('myInv', JSON.stringify(inventory));
     localStorage.setItem('myClients', JSON.stringify(clients));
-    renderTable(); // Refresh Dashboard
+    renderTable(); 
 }
 
 function showSection(sectionId) {
-    // Hide all sections
     document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
-    // Show selected section
     document.getElementById(sectionId).style.display = 'block';
     
-    // Refresh data for the specific section
     if (sectionId === 'inventory') renderInventory();
     if (sectionId === 'clients') renderClients();
 }
@@ -71,33 +68,11 @@ function renderInventory() {
         </div>`;
 }
 
-  if (!clientContainer) return;
+function renderClients() {
+    const clientContainer = document.getElementById('clientList');
+    if (!clientContainer) return;
 
     clientContainer.innerHTML = `
-        <div class="table-container" style="margin-top: 20px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${clients.map(c => `
-                        <tr>
-                            <td>${c.name}</td>
-                            <td>${c.email}</td>
-                            <td>${c.phone}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
-    clientContainer.innerHTML = `
-        <h1>Client Database</h1>
         <div class="table-container" style="margin-top: 20px;">
             <table>
                 <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
@@ -147,7 +122,7 @@ function deleteDoc(index) {
     if(confirm("Delete this?")) { documents.splice(index, 1); saveData(); }
 }
 
-// --- 6. MODAL & DROPDOWNS ---
+// --- 6. MODAL CONTROLS ---
 function openModal() { 
     const select = document.getElementById('clientName');
     select.innerHTML = '<option value="">-- Select Client --</option>'; 
@@ -158,6 +133,27 @@ function openModal() {
 }
 
 function closeModal() { document.getElementById('docModal').style.display = 'none'; }
+
+function openClientModal() { document.getElementById('clientModal').style.display = 'flex'; }
+function closeClientModal() { document.getElementById('clientModal').style.display = 'none'; }
+
+// --- 7. CLIENT MANAGEMENT ---
+function addNewClient() {
+    const name = document.getElementById('newClientName').value;
+    const email = document.getElementById('newClientEmail').value;
+    const phone = document.getElementById('newClientPhone').value;
+
+    if(!name) return alert("Client name is required");
+
+    clients.push({ id: Date.now(), name, email, phone });
+    saveData(); 
+    renderClients(); 
+    closeClientModal();
+    
+    document.getElementById('newClientName').value = '';
+    document.getElementById('newClientEmail').value = '';
+    document.getElementById('newClientPhone').value = '';
+}
 
 function downloadInventoryReport() {
     let csv = "Item Name,Price,Description\n";
@@ -170,38 +166,5 @@ function downloadInventoryReport() {
     a.click();
 }
 
-// Initialize the app
+// Run on start
 renderTable();
-// --- 7. CLIENT MANAGEMENT ACTIONS ---
-function openClientModal() {
-    document.getElementById('clientModal').style.display = 'flex';
-}
-
-function closeClientModal() {
-    document.getElementById('clientModal').style.display = 'none';
-}
-
-function addNewClient() {
-    const name = document.getElementById('newClientName').value;
-    const email = document.getElementById('newClientEmail').value;
-    const phone = document.getElementById('newClientPhone').value;
-
-    if(!name) return alert("Client name is required");
-
-    const newClient = {
-        id: Date.now(),
-        name: name,
-        email: email,
-        phone: phone
-    };
-
-    clients.push(newClient);
-    saveData(); // This saves to localStorage
-    renderClients(); // Refresh the client table
-    closeClientModal(); // Close popup
-    
-    // Clear inputs for next time
-    document.getElementById('newClientName').value = '';
-    document.getElementById('newClientEmail').value = '';
-    document.getElementById('newClientPhone').value = '';
-}
