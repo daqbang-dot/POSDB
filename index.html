@@ -73,19 +73,28 @@
 
     <div id="docModal" class="modal" style="display:none;">
         <div class="modal-overlay" onclick="closeModal()"></div> 
-        <div class="modal-content">
-            <h3>Create New Quotation</h3>
-            <select id="clientName">
-                <option value="">-- Select Client --</option>
-            </select>
-            <input type="text" id="itemName" placeholder="Item/Service Name">
-            <input type="number" id="itemPrice" placeholder="Price">
-            <div class="modal-actions">
-                <button class="btn-primary" onclick="createNewQuote()">Save Quotation</button>
-                <button onclick="closeModal()">Cancel</button>
-            </div>
-        </div>
+<div class="modal-content">
+    <h3>Create New Quotation</h3>
+    
+    <label style="font-size: 0.8rem; color: var(--secondary); margin-bottom: -10px;">Select Client</label>
+    <select id="clientName">
+        <option value="">-- Select Client --</option>
+    </select>
+
+    <label style="font-size: 0.8rem; color: var(--secondary); margin-bottom: -10px;">Select Item from Inventory</label>
+    <select id="itemSelect" onchange="updatePriceFromInventory()">
+        <option value="">-- Select Item --</option>
+    </select>
+
+    <label style="font-size: 0.8rem; color: var(--secondary); margin-bottom: -10px;">Price ($)</label>
+    <input type="number" id="itemPrice" placeholder="0.00">
+
+    <div class="modal-actions">
+        <button class="btn-primary" onclick="createNewQuote()">Save Quotation</button>
+        <button onclick="closeModal()">Cancel</button>
     </div>
+</div>
+
 
     <div id="clientModal" class="modal" style="display:none;">
         <div class="modal-overlay" onclick="closeClientModal()"></div> 
