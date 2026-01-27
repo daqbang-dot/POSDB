@@ -173,18 +173,40 @@ function deleteDoc(index) {
 
 // --- 6. MODAL CONTROLS ---
 function openModal() { 
-    const select = document.getElementById('clientName');
-    select.innerHTML = '<option value="">-- Select Client --</option>'; 
+    // 1. Fill Clients Dropdown
+    const clientSelect = document.getElementById('clientName');
+    clientSelect.innerHTML = '<option value="">-- Select Client --</option>'; 
     clients.forEach(c => {
-        select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+        clientSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
     });
+
+    // 2. NEW: Fill Inventory Dropdown (matches the new 'itemSelect' ID in HTML)
+    const itemSelect = document.getElementById('itemSelect');
+    if (itemSelect) {
+        itemSelect.innerHTML = '<option value="">-- Select Item --</option>';
+        inventory.forEach(item => {
+            itemSelect.innerHTML += `<option value="${item.name}">${item.name}</option>`;
+        });
+    }
+
     document.getElementById('docModal').style.display = 'flex'; 
 }
 
+// Keep these three - they are still perfect!
 function closeModal() { document.getElementById('docModal').style.display = 'none'; }
-
 function openClientModal() { document.getElementById('clientModal').style.display = 'flex'; }
 function closeClientModal() { document.getElementById('clientModal').style.display = 'none'; }
+
+// --- NEW HELPER FUNCTION ---
+// Add this right below the modal controls to handle the auto-pricing
+function updatePriceFromInventory() {
+    const selectedItemName = document.getElementById('itemSelect').value;
+    const itemData = inventory.find(i => i.name === selectedItemName);
+    
+    if (itemData) {
+        document.getElementById('itemPrice').value = itemData.price;
+    }
+}
 
 // --- 7. CLIENT MANAGEMENT ---
 function addNewClient() {
