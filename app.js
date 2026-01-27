@@ -71,8 +71,31 @@ function renderInventory() {
         </div>`;
 }
 
-function renderClients() {
-    const clientContainer = document.getElementById('clients');
+  if (!clientContainer) return;
+
+    clientContainer.innerHTML = `
+        <div class="table-container" style="margin-top: 20px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${clients.map(c => `
+                        <tr>
+                            <td>${c.name}</td>
+                            <td>${c.email}</td>
+                            <td>${c.phone}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
     clientContainer.innerHTML = `
         <h1>Client Database</h1>
         <div class="table-container" style="margin-top: 20px;">
