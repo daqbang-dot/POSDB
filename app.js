@@ -54,6 +54,54 @@ buttons += `<button class="btn-sm secondary" onclick="printDocument('${doc.id}')
         `;
     });
 }
+function renderTable() {
+    const tbody = document.getElementById('docListBody');
+    if (!tbody) return;
+    tbody.innerHTML = ''; 
+
+    // --- NEW: CALCULATION VARIABLES ---
+    let totalRevenue = 0;
+    let pendingCount = 0;
+
+    documents.forEach((doc, index) => {
+        // Calculate document total
+        const docTotal = doc.items.reduce((sum, item) => sum + parseFloat(item.price), 0);
+        
+        // Update Stats Logic
+        if (doc.type === 'Invoice' && doc.status === 'Paid') {
+            totalRevenue += docTotal;
+        }
+        if (doc.type === 'Invoice' && doc.status === 'Pending') {
+            pendingCount++;
+        }
+
+        // --- EXISTING TABLE RENDERING ---
+        let buttons = '';
+        if (doc.type === 'Quotation') {
+            buttons += `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
+        } 
+        if (doc.type === 'Invoice' && doc.status === 'Pending') {
+            buttons += `<button class="btn-sm success" onclick="markAsPaid('${doc.id}')">Mark Paid</button>`;
+        }
+        buttons += `<button class="btn-sm secondary" onclick="printDocument('${doc.id}')">Print</button>`;
+        buttons += `<button class="btn-sm danger" onclick="deleteDoc(${index})">Delete</button>`;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${doc.date}</td>
+                <td>${doc.id}</td>
+                <td>${doc.clientName}</td>
+                <td><span class="badge">${doc.type}</span></td>
+                <td><span class="status-${doc.status.toLowerCase()}">${doc.status}</span></td>
+                <td><div class="action-gap" style="display:flex; gap:5px;">${buttons}</div></td>
+            </tr>
+        `;
+    });
+
+    // --- UPDATE THE UI CARDS ---
+    document.getElementById('statRevenue').innerText = `$${totalRevenue.toFixed(2)}`;
+    document.getElementById('statPending').innerText = pendingCount;
+}
 
 // --- 4. INVENTORY & CLIENT RENDERING ---
 function renderInventory() {
