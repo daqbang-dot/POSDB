@@ -218,7 +218,11 @@ function printDocument(docId) {
     printWindow.document.close();
 }
 
-// Run on start
-document.getElementById('compName').value = companyProfile.name;
-document.getElementById('compAddress').value = companyProfile.address;
-renderTable();
+// --- INITIAL LOAD ---
+window.onload = function() {
+    // Fill the sidebar boxes with your saved info
+    document.getElementById('compName').value = companyProfile.name || "";
+    document.getElementById('compAddress').value = companyProfile.address || "";
+    
+    renderTable(); // Start the dashboard
+};
