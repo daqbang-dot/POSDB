@@ -8,7 +8,7 @@ let clients = JSON.parse(localStorage.getItem('myClients')) || [
     { id: 1, name: "Acme Corp", email: "contact@acme.com", phone: "012-3456789" },
     { id: 2, name: "Global Tech", email: "hello@gt.com", phone: "099-888777" }
 ];
-
+let companyProfile = JSON.parse(localStorage.getItem('myProfile')) || { name: 'BIZMANAGER', address: 'Your Address Here' };
 // --- 2. CORE STORAGE & NAVIGATION ---
 function saveData() {
     localStorage.setItem('myDocs', JSON.stringify(documents));
@@ -24,7 +24,11 @@ function showSection(sectionId) {
     if (sectionId === 'inventory') renderInventory();
     if (sectionId === 'clients') renderClients();
 }
-
+function saveProfile() {
+    companyProfile.name = document.getElementById('compName').value;
+    companyProfile.address = document.getElementById('compAddress').value;
+    localStorage.setItem('myProfile', JSON.stringify(companyProfile));
+}
 // --- 3. RENDER DASHBOARD TABLE ---
 function renderTable() {
     const tbody = document.getElementById('docListBody');
@@ -287,6 +291,8 @@ function printDocument(docId) {
     `);
     printWindow.document.close();
 }
+document.getElementById('compName').value = companyProfile.name;
+document.getElementById('compAddress').value = companyProfile.address;
 // --- 9. SEARCH & FILTER LOGIC ---
 function filterTable() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
