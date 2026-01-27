@@ -217,3 +217,43 @@ function printDocument(docId) {
     `);
     printWindow.document.close();
 }
+// --- 9. SEARCH & FILTER LOGIC ---
+function filterTable() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const tbody = document.getElementById('docListBody');
+    if (!tbody) return;
+
+    // Clear the table first
+    tbody.innerHTML = '';
+
+    // Filter the documents array
+    const filteredDocs = documents.filter(doc => 
+        doc.clientName.toLowerCase().includes(searchTerm) || 
+        doc.id.toLowerCase().includes(searchTerm)
+    );
+
+    // Re-render only the filtered documents
+    filteredDocs.forEach((doc, index) => {
+        // We reuse the exact same button logic from your original renderTable
+        let buttons = '';
+        if (doc.type === 'Quotation') {
+            buttons += `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
+        } 
+        if (doc.type === 'Invoice' && doc.status === 'Pending') {
+            buttons += `<button class="btn-sm success" onclick="markAsPaid('${doc.id}')">Mark Paid</button>`;
+        }
+        buttons += `<button class="btn-sm secondary" onclick="printDocument('${doc.id}')">Print</button>`;
+        buttons += `<button class="btn-sm danger" onclick="deleteDoc(${index})">Delete</button>`;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${doc.date}</td>
+                <td>${doc.id}</td>
+                <td>${doc.clientName}</td>
+                <td><span class="badge">${doc.type}</span></td>
+                <td><span class="status-${doc.status.toLowerCase()}">${doc.status}</span></td>
+                <td><div class="action-gap" style="display:flex; gap:5px;">${buttons}</div></td>
+            </tr>
+        `;
+    });
+}
