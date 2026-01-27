@@ -9,6 +9,7 @@ let clients = JSON.parse(localStorage.getItem('myClients')) || [
     { id: 2, name: "Global Tech", email: "hello@gt.com", phone: "099-888777" }
 ];
 let companyProfile = JSON.parse(localStorage.getItem('myProfile')) || { name: 'BIZMANAGER', address: 'Your Address Here' };
+
 // --- 2. CORE STORAGE & NAVIGATION ---
 function saveData() {
     localStorage.setItem('myDocs', JSON.stringify(documents));
@@ -20,66 +21,38 @@ function saveData() {
 function showSection(sectionId) {
     document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
     document.getElementById(sectionId).style.display = 'block';
-    
     if (sectionId === 'inventory') renderInventory();
     if (sectionId === 'clients') renderClients();
 }
+
 function saveProfile() {
     companyProfile.name = document.getElementById('compName').value;
     companyProfile.address = document.getElementById('compAddress').value;
     localStorage.setItem('myProfile', JSON.stringify(companyProfile));
 }
-// --- 3. RENDER DASHBOARD TABLE ---
-function renderTable() {
+
+// --- 3. RENDER DASHBOARD TABLE & STATS ---
+function renderTable(dataToRender = documents) {
     const tbody = document.getElementById('docListBody');
     if (!tbody) return;
     tbody.innerHTML = ''; 
 
-    documents.forEach((doc, index) => {
-        let buttons = '';
-        if (doc.type === 'Quotation') {
-            buttons += `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
-        } 
-        if (doc.type === 'Invoice' && doc.status === 'Pending') {
-            buttons += `<button class="btn-sm success" onclick="markAsPaid('${doc.id}')">Mark Paid</button>`;
-        }
-buttons += `<button class="btn-sm secondary" onclick="printDocument('${doc.id}')">Print</button>`;
-        buttons += `<button class="btn-sm danger" onclick="deleteDoc(${index})">Delete</button>`;
-
-        tbody.innerHTML += `
-            <tr>
-                <td>${doc.date}</td>
-                <td>${doc.id}</td>
-                <td>${doc.clientName}</td>
-                <td><span class="badge">${doc.type}</span></td>
-                <td><span class="status-${doc.status.toLowerCase()}">${doc.status}</span></td>
-                <td><div class="action-gap" style="display:flex; gap:5px;">${buttons}</div></td>
-            </tr>
-        `;
-    });
-}
-function renderTable() {
-    const tbody = document.getElementById('docListBody');
-    if (!tbody) return;
-    tbody.innerHTML = ''; 
-
-    // --- NEW: CALCULATION VARIABLES ---
     let totalRevenue = 0;
     let pendingCount = 0;
 
-    documents.forEach((doc, index) => {
-        // Calculate document total
+    // Calculate Global Stats based on ALL documents
+    documents.forEach(doc => {
         const docTotal = doc.items.reduce((sum, item) => sum + parseFloat(item.price), 0);
-        
-        // Update Stats Logic
-        if (doc.type === 'Invoice' && doc.status === 'Paid') {
-            totalRevenue += docTotal;
-        }
-        if (doc.type === 'Invoice' && doc.status === 'Pending') {
-            pendingCount++;
-        }
+        if (doc.type === 'Invoice' && doc.status === 'Paid') totalRevenue += docTotal;
+        if (doc.type === 'Invoice' && doc.status === 'Pending') pendingCount++;
+    });
 
-        // --- EXISTING TABLE RENDERING ---
+    // Update UI Cards
+    document.getElementById('statRevenue').innerText = `$${totalRevenue.toFixed(2)}`;
+    document.getElementById('statPending').innerText = pendingCount;
+
+    // Render the rows (filtered or full)
+    dataToRender.forEach((doc, index) => {
         let buttons = '';
         if (doc.type === 'Quotation') {
             buttons += `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
@@ -97,14 +70,10 @@ function renderTable() {
                 <td>${doc.clientName}</td>
                 <td><span class="badge">${doc.type}</span></td>
                 <td><span class="status-${doc.status.toLowerCase()}">${doc.status}</span></td>
-                <td><div class="action-gap" style="display:flex; gap:5px;">${buttons}</div></td>
+                <td><div style="display:flex; gap:5px;">${buttons}</div></td>
             </tr>
         `;
     });
-
-    // --- UPDATE THE UI CARDS ---
-    document.getElementById('statRevenue').innerText = `$${totalRevenue.toFixed(2)}`;
-    document.getElementById('statPending').innerText = pendingCount;
 }
 
 // --- 4. INVENTORY & CLIENT RENDERING ---
@@ -123,8 +92,6 @@ function renderInventory() {
 
 function renderClients() {
     const clientContainer = document.getElementById('clientList');
-    if (!clientContainer) return;
-
     clientContainer.innerHTML = `
         <div class="table-container" style="margin-top: 20px;">
             <table>
@@ -139,18 +106,19 @@ function renderClients() {
 // --- 5. DOCUMENT ACTIONS ---
 function createNewQuote() {
     const client = document.getElementById('clientName').value;
-    const item = document.getElementById('itemName').value;
-    const price = document.getElementById('itemPrice').value;
+    const itemName = document.getElementById('itemSelect').value;
+    const qty = document.getElementById('itemQty').value;
+    const totalPrice = document.getElementById('itemPrice').value;
 
-    if(!client || !item) return alert("Please fill in details");
+    if(!client || !itemName || !totalPrice) return alert("Please fill in all details!");
 
     const newDoc = {
-        id: 'QT-' + Math.floor(Math.random() * 1000),
+        id: 'QT-' + Math.floor(Math.random() * 9000 + 1000),
         date: new Date().toLocaleDateString(),
         clientName: client,
         type: 'Quotation',
         status: 'Pending',
-        items: [{ name: item, price: price }]
+        items: [{ name: `${itemName} (x${qty})`, price: totalPrice }]
     };
 
     documents.push(newDoc);
@@ -175,41 +143,38 @@ function deleteDoc(index) {
     if(confirm("Delete this?")) { documents.splice(index, 1); saveData(); }
 }
 
-// --- 6. MODAL CONTROLS ---
+// --- 6. MODAL & HELPER CONTROLS ---
 function openModal() { 
-    // 1. Fill Clients Dropdown
     const clientSelect = document.getElementById('clientName');
     clientSelect.innerHTML = '<option value="">-- Select Client --</option>'; 
-    clients.forEach(c => {
-        clientSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
-    });
+    clients.forEach(c => clientSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`);
 
-    // 2. NEW: Fill Inventory Dropdown (matches the new 'itemSelect' ID in HTML)
     const itemSelect = document.getElementById('itemSelect');
-    if (itemSelect) {
-        itemSelect.innerHTML = '<option value="">-- Select Item --</option>';
-        inventory.forEach(item => {
-            itemSelect.innerHTML += `<option value="${item.name}">${item.name}</option>`;
-        });
-    }
+    itemSelect.innerHTML = '<option value="">-- Select Item --</option>';
+    inventory.forEach(item => itemSelect.innerHTML += `<option value="${item.name}">${item.name}</option>`);
 
     document.getElementById('docModal').style.display = 'flex'; 
 }
 
-// Keep these three - they are still perfect!
 function closeModal() { document.getElementById('docModal').style.display = 'none'; }
 function openClientModal() { document.getElementById('clientModal').style.display = 'flex'; }
 function closeClientModal() { document.getElementById('clientModal').style.display = 'none'; }
 
-// --- NEW HELPER FUNCTION ---
-// Add this right below the modal controls to handle the auto-pricing
 function updatePriceFromInventory() {
-    const selectedItemName = document.getElementById('itemSelect').value;
-    const itemData = inventory.find(i => i.name === selectedItemName);
-    
+    const itemName = document.getElementById('itemSelect').value;
+    const qty = parseFloat(document.getElementById('itemQty').value) || 0;
+    const itemData = inventory.find(i => i.name === itemName);
     if (itemData) {
-        document.getElementById('itemPrice').value = itemData.price;
+        document.getElementById('itemPrice').value = (itemData.price * qty).toFixed(2);
     }
+}
+
+function filterTable() {
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = documents.filter(doc => 
+        doc.clientName.toLowerCase().includes(term) || doc.id.toLowerCase().includes(term)
+    );
+    renderTable(filtered);
 }
 
 // --- 7. CLIENT MANAGEMENT ---
@@ -217,177 +182,43 @@ function addNewClient() {
     const name = document.getElementById('newClientName').value;
     const email = document.getElementById('newClientEmail').value;
     const phone = document.getElementById('newClientPhone').value;
-
-    if(!name) return alert("Client name is required");
-
+    if(!name) return alert("Client name required");
     clients.push({ id: Date.now(), name, email, phone });
     saveData(); 
-    renderClients(); 
     closeClientModal();
-    
-    document.getElementById('newClientName').value = '';
-    document.getElementById('newClientEmail').value = '';
-    document.getElementById('newClientPhone').value = '';
 }
 
-function downloadInventoryReport() {
-    let csv = "Item Name,Price,Description\n";
-    inventory.forEach(item => { csv += `${item.name},${item.price},"${item.desc}"\n`; });
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'inventory_report.csv';
-    a.click();
-}
-
-// Run on start
-renderTable();
-// --- 8. PRINTING LOGIC ---
+// --- 8. PRINTING ---
 function printDocument(docId) {
     const doc = documents.find(d => d.id === docId);
     if (!doc) return;
-
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
         <html>
-        <head>
-            <title>${doc.type} - ${doc.id}</title>
-            <style>
-                body { font-family: 'Segoe UI', sans-serif; padding: 40px; color: #333; }
-                .header { display: flex; justify-content: space-between; border-bottom: 2px solid #2563eb; padding-bottom: 20px; }
-                .details { margin-top: 30px; line-height: 1.6; }
-                table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-                th { background: #f1f5f9; padding: 12px; border: 1px solid #cbd5e1; text-align: left; }
-                td { padding: 12px; border: 1px solid #cbd5e1; }
-                .total-box { text-align: right; margin-top: 30px; font-size: 1.4rem; font-weight: bold; color: #2563eb; }
-                @media print { .no-print { display: none; } }
-            </style>
-        </head>
+        <head><style>
+            body { font-family: sans-serif; padding: 40px; }
+            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #2563eb; padding-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+            th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+            .total { text-align: right; font-size: 1.5rem; margin-top: 20px; color: #2563eb; }
+        </style></head>
         <body>
             <div class="header">
-                <div><div class="header">
-    <div>
-        <h1 style="margin:0; color:#2563eb;">${companyProfile.name.toUpperCase()}</h1>
-        <p style="margin:0; font-size:0.9rem; white-space: pre-line;">${companyProfile.address}</p>
-    </div>
-    <div style="text-align: right;">
-        <h2 style="margin:0;">${doc.type.toUpperCase()}</h2>
-        <p style="margin:0;">ID: ${doc.id}</p>
-        <p style="margin:0;">Date: ${doc.date}</p>
-    </div>
-</div>
-            <div class="details">
-                <strong>BILLED TO:</strong><br>
-                ${doc.clientName}
+                <div><h1>${companyProfile.name.toUpperCase()}</h1><p>${companyProfile.address}</p></div>
+                <div style="text-align:right;"><h2>${doc.type}</h2><p>ID: ${doc.id}</p></div>
             </div>
+            <p><strong>BILLED TO:</strong> ${doc.clientName}</p>
             <table>
                 <thead><tr><th>Description</th><th>Amount</th></tr></thead>
-                <tbody>
-                    ${doc.items.map(i => `<tr><td>${i.name}</td><td>$${i.price}</td></tr>`).join('')}
-                </tbody>
+                <tbody>${doc.items.map(i => `<tr><td>${i.name}</td><td>$${i.price}</td></tr>`).join('')}</tbody>
             </table>
-            <div class="total-box">Total Amount: $${doc.items.reduce((sum, i) => sum + parseFloat(i.price), 0)}</div>
-            <p style="margin-top: 100px; text-align: center; font-size: 0.9rem; color: #64748b;">
-                Thank you for your business! Generated by BizManager Pro.
-            </p>
-            <script>
-                setTimeout(() => { window.print(); window.close(); }, 500);
-            </script>
-        </body>
-        </html>
-    `);
+            <div class="total">Total: $${doc.items.reduce((sum, i) => sum + parseFloat(i.price), 0).toFixed(2)}</div>
+            <script>setTimeout(() => { window.print(); window.close(); }, 500);</script>
+        </body></html>`);
     printWindow.document.close();
 }
+
+// Run on start
 document.getElementById('compName').value = companyProfile.name;
 document.getElementById('compAddress').value = companyProfile.address;
-// --- 9. SEARCH & FILTER LOGIC ---
-function filterTable() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const tbody = document.getElementById('docListBody');
-    if (!tbody) return;
-
-    // Clear the table first
-    tbody.innerHTML = '';
-
-    // Filter the documents array
-    const filteredDocs = documents.filter(doc => 
-        doc.clientName.toLowerCase().includes(searchTerm) || 
-        doc.id.toLowerCase().includes(searchTerm)
-    );
-
-    // Re-render only the filtered documents
-    filteredDocs.forEach((doc, index) => {
-        // We reuse the exact same button logic from your original renderTable
-        let buttons = '';
-        if (doc.type === 'Quotation') {
-            buttons += `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
-        } 
-        if (doc.type === 'Invoice' && doc.status === 'Pending') {
-            buttons += `<button class="btn-sm success" onclick="markAsPaid('${doc.id}')">Mark Paid</button>`;
-        }
-        buttons += `<button class="btn-sm secondary" onclick="printDocument('${doc.id}')">Print</button>`;
-        buttons += `<button class="btn-sm danger" onclick="deleteDoc(${index})">Delete</button>`;
-
-        tbody.innerHTML += `
-            <tr>
-                <td>${doc.date}</td>
-                <td>${doc.id}</td>
-                <td>${doc.clientName}</td>
-                <td><span class="badge">${doc.type}</span></td>
-                <td><span class="status-${doc.status.toLowerCase()}">${doc.status}</span></td>
-                <td><div class="action-gap" style="display:flex; gap:5px;">${buttons}</div></td>
-            </tr>
-        `;
-    });
-}
-function updatePriceFromInventory() {
-    const itemSelect = document.getElementById('itemSelect');
-    const qtyInput = document.getElementById('itemQty');
-    const priceInput = document.getElementById('itemPrice');
-
-    // Get values
-    const selectedItemName = itemSelect.value;
-    const qty = parseFloat(qtyInput.value) || 0; 
-    
-    // Find the item in your inventory array
-    const itemData = inventory.find(i => i.name === selectedItemName);
-    
-    if (itemData) {
-        // The Math: Unit Price x Quantity
-        const total = itemData.price * qty;
-        priceInput.value = total.toFixed(2); 
-    } else {
-        // If no item is selected, clear the price
-        priceInput.value = "";
-    }
-}
-
-function createNewQuote() {
-    const client = document.getElementById('clientName').value;
-    const itemName = document.getElementById('itemSelect').value;
-    const qty = document.getElementById('itemQty').value;
-    const totalPrice = document.getElementById('itemPrice').value;
-
-    // VALIDATION: This prevents the "dead" save button issue
-    if(!client || !itemName || !totalPrice || totalPrice <= 0) {
-        return alert("Please select a client, an item, and ensure Quantity is at least 1.");
-    }
-
-    const newDoc = {
-        id: 'QT-' + Math.floor(Math.random() * 9000 + 1000), 
-        date: new Date().toLocaleDateString(),
-        clientName: client,
-        type: 'Quotation',
-        status: 'Pending',
-        // This stores it cleanly for the 'Print' function later
-        items: [{ name: `${itemName} (x${qty})`, price: totalPrice }]
-    };
-
-    documents.push(newDoc);
-    saveData(); 
-    closeModal();
-    
-    // Reset Qty field to 1 for the next use
-    if(document.getElementById('itemQty')) document.getElementById('itemQty').value = "1";
-}
+renderTable();
