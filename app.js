@@ -26,14 +26,12 @@ function showSection(sectionId) {
 }
 
 function saveProfile() {
-    const nameVal = document.getElementById('compName').value;
-    const addrVal = document.getElementById('compAddress').value;
+    // Capture the values
+    const name = document.getElementById('compName').value;
+    const addr = document.getElementById('compAddress').value;
 
-    // Update the live variable
-    companyProfile.name = nameVal;
-    companyProfile.address = addrVal;
-
-    // Save to local storage
+    // Update variable and storage
+    companyProfile = { name: name, address: addr };
     localStorage.setItem('myProfile', JSON.stringify(companyProfile));
 }
 
