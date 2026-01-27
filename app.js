@@ -88,3 +88,10 @@ function convertToInvoice(quoteId) {
     saveData();
     alert(`Success! ${quoteId} has been converted to ${newInvoice.id}`);
 }
+function markAsPaid(docId) {
+    const doc = documents.find(d => d.id === docId);
+    if (doc) {
+        doc.status = 'Paid';
+        saveData();
+    }
+}
