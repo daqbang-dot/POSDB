@@ -226,3 +226,14 @@ window.onload = function() {
     
     renderTable(); // Start the dashboard
 };
+window.onload = function() {
+    // Fill the sidebar boxes from our saved data
+    if(document.getElementById('compName')) {
+        document.getElementById('compName').value = companyProfile.name || "";
+    }
+    if(document.getElementById('compAddress')) {
+        document.getElementById('compAddress').value = companyProfile.address || "";
+    }
+    
+    renderTable(); 
+};
