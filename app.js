@@ -19,7 +19,47 @@ function showSection(sectionId) {
 }
 
 // Function to display the documents in the HTML table
-function renderTable() {
+function function renderTable() {
+    const tbody = document.getElementById('docListBody');
+    if (!tbody) return;
+    tbody.innerHTML = ''; 
+
+    documents.forEach((doc, index) => {
+        // Logic to decide which buttons to show
+        let buttons = '';
+        
+        if (doc.type === 'Quotation') {
+            buttons += `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
+        } 
+        
+        if (doc.type === 'Invoice' && doc.status === 'Pending') {
+            buttons += `<button class="btn-sm success" onclick="markAsPaid('${doc.id}')">Mark Paid</button>`;
+        }
+
+        // Always show a delete button for every row
+        buttons += `<button class="btn-sm danger" onclick="deleteDoc(${index})">Delete</button>`;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${doc.date}</td>
+                <td>${doc.id}</td>
+                <td>${doc.clientName}</td>
+                <td><span class="badge">${doc.type}</span></td>
+                <td><span class="status-${doc.status.toLowerCase()}">${doc.status}</span></td>
+                <td><div class="action-gap">${buttons}</div></td>
+            </tr>
+        `;
+    });
+}
+
+// Add this helper function to delete records
+function deleteDoc(index) {
+    if(confirm("Are you sure you want to delete this?")) {
+        documents.splice(index, 1);
+        saveData();
+    }
+}
+ {
     const tbody = document.getElementById('docListBody');
     tbody.innerHTML = ''; // Clear table
 
