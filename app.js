@@ -1,4 +1,4 @@
-function openModal() { 
+ { 
     document.getElementById('docModal').style.display = 'flex'; 
 }
 // 1. Data Initialization
