@@ -243,3 +243,15 @@ window.onload = function() {
     
     renderTable(); 
 };
+// --- Ensure this is at the VERY bottom of your app.js ---
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. Force load the saved profile into the inputs
+    const nameInput = document.getElementById('compName');
+    const addrInput = document.getElementById('compAddress');
+
+    if (nameInput) nameInput.value = companyProfile.name || "";
+    if (addrInput) addrInput.value = companyProfile.address || "";
+
+    // 2. Refresh the dashboard
+    renderTable();
+});
