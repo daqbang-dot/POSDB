@@ -58,6 +58,19 @@
     </main>
 
     <div id="docModal" class="modal" style="display:none;">
+<div id="clientModal" class="modal" style="display:none;">
+    <div class="modal-overlay" onclick="closeClientModal()"></div> 
+    <div class="modal-content">
+        <h3>Add New Client</h3>
+        <input type="text" id="newClientName" placeholder="Company Name">
+        <input type="email" id="newClientEmail" placeholder="Email Address">
+        <input type="text" id="newClientPhone" placeholder="Phone Number">
+        <div class="modal-actions">
+            <button class="btn-primary" onclick="addNewClient()">Save Client</button>
+            <button onclick="closeClientModal()">Cancel</button>
+        </div>
+    </div>
+</div>
         <div class="modal-overlay" onclick="closeModal()"></div> 
         <div class="modal-content">
             <h3>Create New Quotation</h3>
