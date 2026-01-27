@@ -8,18 +8,19 @@
 </head>
 <body>
 
-    <div class="sidebar" style="display: flex; flex-direction: column;">
+    <div class="sidebar" style="display: flex; flex-direction: column; height: 100vh; position: fixed;">
     <h2>POSDB</h2>
-    <nav>
-        <button onclick="showSection('dashboard')">Dashboard</button>
+    <nav style="flex: 1;"> <button onclick="showSection('dashboard')">Dashboard</button>
         <button onclick="showSection('inventory')">Inventory</button>
         <button onclick="showSection('clients')">Clients</button>
     </nav>
 
-    <div class="company-settings" style="margin-top: auto; padding-top: 20px; border-top: 1px solid #334155;">
-        <p style="font-size: 0.8rem; color: var(--primary); margin-bottom: 10px;">COMPANY PROFILE</p>
-        <input type="text" id="compName" placeholder="Business Name" oninput="saveProfile()" style="width: 100%; margin-bottom: 5px; background: #334155; border: none; color: white; padding: 5px; border-radius: 4px;">
-        <textarea id="compAddress" placeholder="Business Address" oninput="saveProfile()" style="width: 100%; background: #334155; border: none; color: white; padding: 5px; border-radius: 4px; font-size: 0.8rem; height: 50px;"></textarea>
+    <div class="company-settings" style="padding: 20px 0; border-top: 1px solid #334155; margin-bottom: 20px;">
+        <p style="font-size: 0.7rem; color: var(--primary); margin-bottom: 8px; font-weight: bold;">COMPANY PROFILE</p>
+        <input type="text" id="compName" placeholder="Business Name" oninput="saveProfile()" 
+               style="width: 100%; margin-bottom: 8px; background: #334155; border: 1px solid #475569; color: white; padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+        <textarea id="compAddress" placeholder="Business Address" oninput="saveProfile()" 
+                  style="width: 100%; background: #334155; border: 1px solid #475569; color: white; padding: 8px; border-radius: 4px; font-size: 0.75rem; height: 60px; resize: none;"></textarea>
     </div>
 </div>
 
