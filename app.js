@@ -41,3 +41,29 @@ function renderTable() {
 
 // Run this when the page loads
 renderTable();
+function openModal() {
+    document.getElementById('docModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('docModal').style.display = 'none';
+}
+
+function createNewQuote() {
+    const client = document.getElementById('clientName').value;
+    const item = document.getElementById('itemName').value;
+    const price = document.getElementById('itemPrice').value;
+
+    const newDoc = {
+        id: 'QT-' + Math.floor(Math.random() * 1000),
+        date: new Date().toLocaleDateString(),
+        clientName: client,
+        type: 'Quotation',
+        status: 'Pending',
+        items: [{ name: item, price: price }]
+    };
+
+    documents.push(newDoc); // Add to our list
+    saveData();             // Save to LocalStorage and Refresh table
+    closeModal();           // Hide popup
+}
