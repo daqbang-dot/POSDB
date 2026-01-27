@@ -172,3 +172,36 @@ function downloadInventoryReport() {
 
 // Initialize the app
 renderTable();
+// --- 7. CLIENT MANAGEMENT ACTIONS ---
+function openClientModal() {
+    document.getElementById('clientModal').style.display = 'flex';
+}
+
+function closeClientModal() {
+    document.getElementById('clientModal').style.display = 'none';
+}
+
+function addNewClient() {
+    const name = document.getElementById('newClientName').value;
+    const email = document.getElementById('newClientEmail').value;
+    const phone = document.getElementById('newClientPhone').value;
+
+    if(!name) return alert("Client name is required");
+
+    const newClient = {
+        id: Date.now(),
+        name: name,
+        email: email,
+        phone: phone
+    };
+
+    clients.push(newClient);
+    saveData(); // This saves to localStorage
+    renderClients(); // Refresh the client table
+    closeClientModal(); // Close popup
+    
+    // Clear inputs for next time
+    document.getElementById('newClientName').value = '';
+    document.getElementById('newClientEmail').value = '';
+    document.getElementById('newClientPhone').value = '';
+}
