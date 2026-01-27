@@ -1,3 +1,6 @@
+function openModal() { 
+    document.getElementById('docModal').style.display = 'flex'; 
+}
 // 1. Data Initialization
 let documents = JSON.parse(localStorage.getItem('myDocs')) || [];
 let inventory = JSON.parse(localStorage.getItem('myInv')) || [
