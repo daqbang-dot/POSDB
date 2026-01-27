@@ -266,9 +266,17 @@ function printDocument(docId) {
         </head>
         <body>
             <div class="header">
-                <div><h1>BIZMANAGER PRO</h1><p>Official ${doc.type}</p></div>
-                <div style="text-align: right;"><h2>${doc.id}</h2><p>Date: ${doc.date}</p></div>
-            </div>
+                <div><div class="header">
+    <div>
+        <h1 style="margin:0; color:#2563eb;">${companyProfile.name.toUpperCase()}</h1>
+        <p style="margin:0; font-size:0.9rem; white-space: pre-line;">${companyProfile.address}</p>
+    </div>
+    <div style="text-align: right;">
+        <h2 style="margin:0;">${doc.type.toUpperCase()}</h2>
+        <p style="margin:0;">ID: ${doc.id}</p>
+        <p style="margin:0;">Date: ${doc.date}</p>
+    </div>
+</div>
             <div class="details">
                 <strong>BILLED TO:</strong><br>
                 ${doc.clientName}
