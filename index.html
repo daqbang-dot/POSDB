@@ -87,15 +87,17 @@
     </select>
 
     <div style="display: flex; gap: 10px;">
-        <div style="flex: 1;">
-            <label style="font-size: 0.8rem; color: var(--secondary);">Qty</label>
-            <input type="number" id="itemQty" value="1" min="1" oninput="updatePriceFromInventory()" style="width: 100%;">
-        </div>
-        <div style="flex: 2;">
-            <label style="font-size: 0.8rem; color: var(--secondary);">Total Price ($)</label>
-            <input type="number" id="itemPrice" placeholder="0.00" style="width: 100%;">
-        </div>
+        <div style="display: flex; gap: 10px;">
+    <div style="flex: 1;">
+        <label style="font-size: 0.8rem;">Qty</label>
+        <input type="number" id="itemQty" value="1" min="1" oninput="updatePriceFromInventory()" style="width: 100%;">
     </div>
+    <div style="flex: 2;">
+        <label style="font-size: 0.8rem;">Total Price ($)</label>
+        <input type="number" id="itemPrice" placeholder="0.00" style="width: 100%;">
+    </div>
+</div>
+
 
     <div class="modal-actions">
         <button class="btn-primary" onclick="createNewQuote()">Save Quotation</button>
