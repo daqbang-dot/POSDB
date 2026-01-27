@@ -21,7 +21,7 @@
         <section id="dashboard">
             <header>
                 <h1>Recent Documents</h1>
-                <button class="btn-primary" onclick="openModal('quote')">+ Create Quotation</button>
+                <button class="btn-primary" onclick="openModal()">+ Create Quotation</button>
             </header>
             
             <div class="table-container">
@@ -47,22 +47,12 @@
             <button class="btn-secondary" onclick="downloadInventoryReport()">Download CSV Report</button>
             <div id="inventoryList"></div>
         </section>
+        
+        <section id="clients" style="display:none;">
+            <h1>Client Database</h1>
+            <p>Coming soon...</p>
+        </section>
     </main>
-
-    <script src="app.js"></script>
-<div id="docModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <h3>Create New Quotation</h3>
-        <input type="text" id="clientName" placeholder="Client Name">
-        <input type="text" id="itemName" placeholder="Item/Service Name">
-        <input type="number" id="itemPrice" placeholder="Price">
-        <div class="modal-actions">
-            <button class="btn-primary" onclick="createNewQuote()">Save Quotation</button>
-            <button onclick="closeModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-    </main> <script src="app.js"></script>
 
     <div id="docModal" class="modal" style="display:none;">
         <div class="modal-overlay" onclick="closeModal()"></div> 
@@ -78,4 +68,6 @@
         </div>
     </div>
 
-</body> </html>
+    <script src="app.js"></script>
+</body> 
+</html>
