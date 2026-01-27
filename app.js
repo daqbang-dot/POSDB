@@ -67,3 +67,24 @@ function createNewQuote() {
     saveData();             // Save to LocalStorage and Refresh table
     closeModal();           // Hide popup
 }
+function convertToInvoice(quoteId) {
+    // 1. Find the original quotation
+    const quoteIndex = documents.findIndex(d => d.id === quoteId);
+    if (quoteIndex === -1) return;
+
+    const quote = documents[quoteIndex];
+
+    // 2. Create the new Invoice based on the Quote data
+    const newInvoice = {
+        ...quote, // Copy all data (client, items, etc.)
+        id: quote.id.replace('QT-', 'INV-'), // Change ID prefix
+        type: 'Invoice',
+        date: new Date().toLocaleDateString(),
+        status: 'Pending'
+    };
+
+    // 3. Add to our list and save
+    documents.push(newInvoice);
+    saveData();
+    alert(`Success! ${quoteId} has been converted to ${newInvoice.id}`);
+}
