@@ -1,38 +1,34 @@
-// 1. Data Initialization
+// --- 1. DATA INITIALIZATION ---
 let documents = JSON.parse(localStorage.getItem('myDocs')) || [];
 let inventory = JSON.parse(localStorage.getItem('myInv')) || [
     { id: 1, name: "Widget A", price: 100, desc: "High quality widget" },
     { id: 2, name: "Service B", price: 500, desc: "Consulting per hour" }
 ];
-// ADD THIS LINE:
 let clients = JSON.parse(localStorage.getItem('myClients')) || [
-    { id: 1, name: "Acme Corp", email: "contact@acme.com", phone: "012-3456789" }
-];
-// 1. Data Initialization
-let documents = JSON.parse(localStorage.getItem('myDocs')) || [];
-let inventory = JSON.parse(localStorage.getItem('myInv')) || [
-    { id: 1, name: "Widget A", price: 100, desc: "High quality widget" },
-    { id: 2, name: "Service B", price: 500, desc: "Consulting per hour" }
+    { id: 1, name: "Acme Corp", email: "contact@acme.com", phone: "012-3456789" },
+    { id: 2, name: "Global Tech", email: "hello@gt.com", phone: "099-888777" }
 ];
 
-// 2. Core Functions
+// --- 2. CORE STORAGE & NAVIGATION ---
 function saveData() {
     localStorage.setItem('myDocs', JSON.stringify(documents));
     localStorage.setItem('myInv', JSON.stringify(inventory));
-    renderTable();
+    localStorage.setItem('myClients', JSON.stringify(clients));
+    renderTable(); // Refresh Dashboard
 }
 
-// Updated showSection to also refresh Inventory list
 function showSection(sectionId) {
+    // Hide all sections
     document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
+    // Show selected section
     document.getElementById(sectionId).style.display = 'block';
     
-    if (sectionId === 'inventory') {
-        renderInventory();
-    }
+    // Refresh data for the specific section
+    if (sectionId === 'inventory') renderInventory();
+    if (sectionId === 'clients') renderClients();
 }
 
-// 3. Render Table
+// --- 3. RENDER DASHBOARD TABLE ---
 function renderTable() {
     const tbody = document.getElementById('docListBody');
     if (!tbody) return;
@@ -55,47 +51,41 @@ function renderTable() {
                 <td>${doc.clientName}</td>
                 <td><span class="badge">${doc.type}</span></td>
                 <td><span class="status-${doc.status.toLowerCase()}">${doc.status}</span></td>
-                <td><div class="action-gap">${buttons}</div></td>
+                <td><div class="action-gap" style="display:flex; gap:5px;">${buttons}</div></td>
             </tr>
         `;
     });
 }
 
-// 4. Inventory Management
+// --- 4. INVENTORY & CLIENT RENDERING ---
 function renderInventory() {
     const invContainer = document.getElementById('inventoryList');
-    if (!invContainer) return;
-
     invContainer.innerHTML = `
         <div class="table-container" style="margin-top: 20px;">
             <table>
-                <thead>
-                    <tr><th>Name</th><th>Price</th><th>Description</th></tr>
-                </thead>
+                <thead><tr><th>Name</th><th>Price</th><th>Description</th></tr></thead>
                 <tbody>
-                    ${inventory.map(item => `
-                        <tr><td>${item.name}</td><td>$${item.price}</td><td>${item.desc}</td></tr>
-                    `).join('')}
+                    ${inventory.map(item => `<tr><td>${item.name}</td><td>$${item.price}</td><td>${item.desc}</td></tr>`).join('')}
                 </tbody>
             </table>
-        </div>
-    `;
+        </div>`;
 }
 
-function downloadInventoryReport() {
-    let csv = "Item Name,Price,Description\n";
-    inventory.forEach(item => {
-        csv += `${item.name},${item.price},"${item.desc}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'inventory_report.csv';
-    a.click();
+function renderClients() {
+    const clientContainer = document.getElementById('clients');
+    clientContainer.innerHTML = `
+        <h1>Client Database</h1>
+        <div class="table-container" style="margin-top: 20px;">
+            <table>
+                <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+                <tbody>
+                    ${clients.map(c => `<tr><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td></tr>`).join('')}
+                </tbody>
+            </table>
+        </div>`;
 }
 
-// 5. Document Actions
+// --- 5. DOCUMENT ACTIONS ---
 function createNewQuote() {
     const client = document.getElementById('clientName').value;
     const item = document.getElementById('itemName').value;
@@ -134,56 +124,28 @@ function deleteDoc(index) {
     if(confirm("Delete this?")) { documents.splice(index, 1); saveData(); }
 }
 
-// 6. Modal Controls
-function openModal() { document.getElementById('docModal').style.display = 'flex'; }
-function closeModal() { document.getElementById('docModal').style.display = 'none'; }
-
-renderTable();
-function saveData() {
-    localStorage.setItem('myDocs', JSON.stringify(documents));
-    localStorage.setItem('myInv', JSON.stringify(inventory));
-    localStorage.setItem('myClients', JSON.stringify(clients)); // Add this
-    renderTable();
-}
-function renderClients() {
-    const clientContainer = document.getElementById('clients'); // Matches the ID in your HTML
-    if (!clientContainer) return;
-
-    clientContainer.innerHTML = `
-        <h1>Client Database</h1>
-        <div class="table-container" style="margin-top: 20px;">
-            <table>
-                <thead>
-                    <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
-                </thead>
-                <tbody>
-                    ${clients.map(c => `
-                        <tr><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td></tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
-
-// Update showSection to handle clients
-function showSection(sectionId) {
-    document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
-    document.getElementById(sectionId).style.display = 'block';
-    
-    if (sectionId === 'inventory') renderInventory();
-    if (sectionId === 'clients') renderClients(); // Add this line
-}
-function populateClientDropdown() {
+// --- 6. MODAL & DROPDOWNS ---
+function openModal() { 
     const select = document.getElementById('clientName');
-    select.innerHTML = '<option value="">-- Select Client --</option>'; // Reset
+    select.innerHTML = '<option value="">-- Select Client --</option>'; 
     clients.forEach(c => {
         select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
     });
-}
-
-// Update your openModal function
-function openModal() { 
-    populateClientDropdown(); // Load clients before showing the modal
     document.getElementById('docModal').style.display = 'flex'; 
 }
+
+function closeModal() { document.getElementById('docModal').style.display = 'none'; }
+
+function downloadInventoryReport() {
+    let csv = "Item Name,Price,Description\n";
+    inventory.forEach(item => { csv += `${item.name},${item.price},"${item.desc}"\n`; });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'inventory_report.csv';
+    a.click();
+}
+
+// Initialize the app
+renderTable();
