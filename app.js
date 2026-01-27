@@ -4,6 +4,16 @@ let inventory = JSON.parse(localStorage.getItem('myInv')) || [
     { id: 1, name: "Widget A", price: 100, desc: "High quality widget" },
     { id: 2, name: "Service B", price: 500, desc: "Consulting per hour" }
 ];
+// ADD THIS LINE:
+let clients = JSON.parse(localStorage.getItem('myClients')) || [
+    { id: 1, name: "Acme Corp", email: "contact@acme.com", phone: "012-3456789" }
+];
+// 1. Data Initialization
+let documents = JSON.parse(localStorage.getItem('myDocs')) || [];
+let inventory = JSON.parse(localStorage.getItem('myInv')) || [
+    { id: 1, name: "Widget A", price: 100, desc: "High quality widget" },
+    { id: 2, name: "Service B", price: 500, desc: "Consulting per hour" }
+];
 
 // 2. Core Functions
 function saveData() {
