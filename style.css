@@ -76,10 +76,25 @@ header {
 
 /* Table Styling */
 .table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     background: white;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    overflow: hidden;
+    margin-top: 20px;
+}
+
+/* Adjust main content for mobile */
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0;
+        padding: 20px;
+        width: 100%;
+        padding-top: 80px; /* Space for a mobile menu if you add one later */
+    }
+    .sidebar {
+        display: none; /* We can add a "Menu" button later to show/hide this */
+    }
 }
 
 table {
