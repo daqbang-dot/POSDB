@@ -8,23 +8,23 @@
 </head>
 <body>
 
-    <div class="sidebar" style="display: flex; flex-direction: column; height: 100vh; position: fixed;">
+    <div class="sidebar">
     <h2>POSDB</h2>
-    <nav style="flex: 1;"> <button onclick="showSection('dashboard')">Dashboard</button>
+    <nav style="flex: 1;">
+        <button onclick="showSection('dashboard')">Dashboard</button>
         <button onclick="showSection('inventory')">Inventory</button>
         <button onclick="showSection('clients')">Clients</button>
     </nav>
 
-    <div class="company-settings" style="padding: 20px 0; border-top: 1px solid #334155; margin-bottom: 20px;">
-        <p style="font-size: 0.7rem; color: var(--primary); margin-bottom: 8px; font-weight: bold;">COMPANY PROFILE</p>
-        <input type="text" id="compName" placeholder="Business Name" oninput="saveProfile()" ... >
-<textarea id="compAddress" placeholder="Address" oninput="saveProfile()" ... ></textarea>
-
-               style="width: 100%; margin-bottom: 8px; background: #334155; border: 1px solid #475569; color: white; padding: 8px; border-radius: 4px; font-size: 0.8rem;">
-        <textarea id="compAddress" placeholder="Business Address" oninput="saveProfile()" 
-                  style="width: 100%; background: #334155; border: 1px solid #475569; color: white; padding: 8px; border-radius: 4px; font-size: 0.75rem; height: 60px; resize: none;"></textarea>
+    <div class="company-settings" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #334155;">
+        <p style="font-size: 0.7rem; color: var(--primary); margin-bottom: 10px; font-weight: bold;">COMPANY PROFILE</p>
+        <input type="text" id="compName" placeholder="Business Name" oninput="saveProfile()" 
+               style="background: #334155; color: white; padding: 8px; border-radius: 4px; margin-bottom: 8px; border: none;">
+        <textarea id="compAddress" placeholder="Address" oninput="saveProfile()" 
+                  style="background: #334155; color: white; padding: 8px; border-radius: 4px; border: none; font-size: 0.8rem; height: 50px; resize: none;"></textarea>
     </div>
 </div>
+
 
     <div class="table-container">
         <table id="docTable">
