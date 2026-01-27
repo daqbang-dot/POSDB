@@ -50,5 +50,17 @@
     </main>
 
     <script src="app.js"></script>
+<div id="docModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Create New Quotation</h3>
+        <input type="text" id="clientName" placeholder="Client Name">
+        <input type="text" id="itemName" placeholder="Item/Service Name">
+        <input type="number" id="itemPrice" placeholder="Price">
+        <div class="modal-actions">
+            <button class="btn-primary" onclick="createNewQuote()">Save Quotation</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
