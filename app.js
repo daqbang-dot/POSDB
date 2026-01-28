@@ -20,24 +20,29 @@ function showSection(sectionId) {
 // Function to display the documents in the HTML table
 function renderTable() {
     const tbody = document.getElementById('docListBody');
-    tbody.innerHTML = ''; // Clear table
+    tbody.innerHTML = ''; 
 
     documents.forEach(doc => {
+        // Decide which button to show based on type
+        let actionButton = '';
+        if (doc.type === 'Quotation') {
+            actionButton = `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
+        } else if (doc.type === 'Invoice' && doc.status !== 'Paid') {
+            actionButton = `<button class="btn-sm success" onclick="markAsPaid('${doc.id}')">Mark Paid</button>`;
+        }
+
         tbody.innerHTML += `
             <tr>
                 <td>${doc.date}</td>
                 <td>${doc.id}</td>
                 <td>${doc.clientName}</td>
                 <td><span class="badge">${doc.type}</span></td>
-                <td>${doc.status}</td>
-                <td>
-                    <button onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>
-                </td>
+                <td><span class="status-${doc.status.toLowerCase()}">${doc.status}</span></td>
+                <td>${actionButton}</td>
             </tr>
         `;
     });
 }
-
 // Run this when the page loads
 renderTable();
 function openModal() {
