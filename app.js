@@ -121,7 +121,18 @@ function markAsPaid(docId) {
 function deleteDoc(index) {
     if(confirm("Delete this?")) { documents.splice(index, 1); saveData(); }
 }
-
+function updatePriceFromInventory() {
+    const selectedItemName = document.getElementById('itemSelect').value;
+    const qty = parseFloat(document.getElementById('itemQty').value) || 1;
+    
+    // Find the item in your inventory array to get its price
+    const itemData = inventory.find(i => i.name === selectedItemName);
+    
+    if (itemData) {
+        const total = itemData.price * qty;
+        document.getElementById('itemPrice').value = total.toFixed(2);
+    }
+}
 // --- 6. MODAL CONTROLS ---
 function openModal() { 
     const select = document.getElementById('clientName');
@@ -167,7 +178,6 @@ function downloadInventoryReport() {
 }
 
 // Run on start
-renderTable();
 // Run on start
 window.onload = () => {
     if (document.getElementById('compName')) {
@@ -210,7 +220,52 @@ function createNewQuote() {
         status: 'Pending',
         items: [{ name: `${itemName} (x${qty})`, price: price }]
     };
+function printDocument(docId) {
+    const doc = documents.find(d => d.id === docId);
+    if (!doc) return;
 
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+        <head><title>Print ${doc.id}</title></head>
+        <body style="font-family: sans-serif; padding: 40px;">
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <h1 style="margin:0; color: #2563eb;">${companyProfile.name}</h1>
+                    <p style="white-space: pre-line;">${companyProfile.address}</p>
+                </div>
+                <div style="text-align: right;">
+                    <h2>${doc.type.toUpperCase()}</h2>
+                    <p><b>ID:</b> ${doc.id}<br><b>Date:</b> ${doc.date}</p>
+                </div>
+            </div>
+            <hr style="margin: 20px 0;">
+            <p><b>To:</b> ${doc.clientName}</p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                    <tr style="background: #f8fafc;">
+                        <th style="text-align: left; padding: 10px; border: 1px solid #ddd;">Description</th>
+                        <th style="text-align: right; padding: 10px; border: 1px solid #ddd;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${doc.items.map(item => `
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
+                            <td style="text-align: right; padding: 10px; border: 1px solid #ddd;">$${item.price}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <div style="text-align: right; margin-top: 20px;">
+                <h3>Total Amount: $${doc.items.reduce((sum, item) => sum + parseFloat(item.price), 0).toFixed(2)}</h3>
+            </div>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+}
     documents.push(newDoc);
     saveData();
     closeModal();
