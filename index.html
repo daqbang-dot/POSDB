@@ -1,1 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Manager Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+    <div class="sidebar">
+        <h2>BizManager</h2>
+        <nav>
+            <button onclick="showSection('dashboard')">Dashboard</button>
+            <button onclick="showSection('inventory')">Inventory</button>
+            <button onclick="showSection('clients')">Clients</button>
+        </nav>
+    </div>
+
+    <main class="content">
+        <section id="dashboard">
+            <header>
+                <h1>Recent Documents</h1>
+                <button class="btn-primary" onclick="openModal('quote')">+ Create Quotation</button>
+            </header>
+            
+            <div class="table-container">
+                <table id="docTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>ID</th>
+                            <th>Client</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="docListBody">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="inventory" style="display:none;">
+            <h1>Inventory Management</h1>
+            <button class="btn-secondary" onclick="downloadInventoryReport()">Download CSV Report</button>
+            <div id="inventoryList"></div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
