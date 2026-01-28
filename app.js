@@ -1,22 +1,22 @@
 // --- 1. DATA INITIALIZATION ---
 let documents = JSON.parse(localStorage.getItem('myDocs')) || [];
 let inventory = JSON.parse(localStorage.getItem('myInv')) || [
-    { id: 1, name: "Widget A", price: 100, desc: "High quality widget" },
-    { id: 2, name: "Service B", price: 500, desc: "Consulting per hour" }
+    { name: "Widget A", price: 100 },
+    { name: "Service B", price: 500 }
 ];
-let clients = JSON.parse(localStorage.getItem('myClients')) || [
-    { id: 1, name: "Acme Corp", email: "contact@acme.com", phone: "012-3456789" },
-    { id: 2, name: "Global Tech", email: "hello@gt.com", phone: "099-888777" }
-];
+let clients = JSON.parse(localStorage.getItem('myClients')) || [{ name: "Acme Corp" }];
+let companyProfile = JSON.parse(localStorage.getItem('myProfile')) || { name: 'POSDB', address: 'Address' };
 
 // --- 2. CORE STORAGE & NAVIGATION ---
 function saveData() {
     localStorage.setItem('myDocs', JSON.stringify(documents));
-    localStorage.setItem('myInv', JSON.stringify(inventory));
-    localStorage.setItem('myClients', JSON.stringify(clients));
-    renderTable(); 
+    renderTable();
 }
-
+function saveProfile() {
+    companyProfile.name = document.getElementById('compName').value;
+    companyProfile.address = document.getElementById('compAddress').value;
+    localStorage.setItem('myProfile', JSON.stringify(companyProfile));
+}
 function showSection(sectionId) {
     document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
     document.getElementById(sectionId).style.display = 'block';
@@ -168,3 +168,50 @@ function downloadInventoryReport() {
 
 // Run on start
 renderTable();
+// Run on start
+window.onload = () => {
+    if (document.getElementById('compName')) {
+        document.getElementById('compName').value = companyProfile.name;
+    }
+    if (document.getElementById('compAddress')) {
+        document.getElementById('compAddress').value = companyProfile.address;
+    }
+    renderTable();
+};
+// Add items to the dropdown when opening the modal
+function openModal() { 
+    // Fill Clients
+    const clientSelect = document.getElementById('clientName');
+    clientSelect.innerHTML = '<option value="">-- Select Client --</option>'; 
+    clients.forEach(c => clientSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`);
+
+    // Fill Items
+    const itemSelect = document.getElementById('itemSelect');
+    itemSelect.innerHTML = '<option value="">-- Select Item --</option>';
+    inventory.forEach(item => itemSelect.innerHTML += `<option value="${item.name}">${item.name}</option>`);
+
+    document.getElementById('docModal').style.display = 'flex'; 
+}
+
+// Updated quote creation to use the selected item and qty
+function createNewQuote() {
+    const client = document.getElementById('clientName').value;
+    const itemName = document.getElementById('itemSelect').value;
+    const qty = document.getElementById('itemQty').value;
+    const price = document.getElementById('itemPrice').value;
+
+    if(!client || !itemName || !price) return alert("Please fill in details");
+
+    const newDoc = {
+        id: 'QT-' + Math.floor(Math.random() * 9000 + 1000),
+        date: new Date().toLocaleDateString(),
+        clientName: client,
+        type: 'Quotation',
+        status: 'Pending',
+        items: [{ name: `${itemName} (x${qty})`, price: price }]
+    };
+
+    documents.push(newDoc);
+    saveData();
+    closeModal();
+}
