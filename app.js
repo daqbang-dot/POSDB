@@ -156,27 +156,23 @@ function addNewClient() {
 
     if(!name) return alert("Client name is required");
 
+    // 1. Add to the array
     clients.push({ id: Date.now(), name, email, phone });
-    saveData(); 
+
+    // 2. Save specifically to the 'myClients' storage key
+    localStorage.setItem('myClients', JSON.stringify(clients));
+    
+    // 3. Update the UI
     renderClients(); 
     closeClientModal();
     
+    // 4. Clear the inputs
     document.getElementById('newClientName').value = '';
     document.getElementById('newClientEmail').value = '';
     document.getElementById('newClientPhone').value = '';
+    
+    alert("Client added successfully!");
 }
-
-function downloadInventoryReport() {
-    let csv = "Item Name,Price,Description\n";
-    inventory.forEach(item => { csv += `${item.name},${item.price},"${item.desc}"\n`; });
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'inventory_report.csv';
-    a.click();
-}
-
 // Run on start
 // Run on start
 window.onload = () => {
