@@ -107,3 +107,26 @@ th {
 .status-pending { color: #ca8a04; font-weight: bold; }
 .btn-sm { padding: 5px 10px; font-size: 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ddd; }
 .btn-sm.success { background-color: #22c55e; color: white; border: none; }
+/* Space between buttons */
+.action-gap {
+    display: flex;
+    gap: 5px;
+}
+
+/* Red button for delete */
+.btn-sm.danger {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+}
+
+/* Green button for "Mark Paid" */
+.btn-sm.success {
+    background-color: #22c55e;
+    color: white;
+    border: none;
+}
+
+/* Colors for the Status column */
+.status-paid { color: #16a34a; font-weight: bold; }
+.status-pending { color: #ca8a04; font-weight: bold; }
