@@ -163,3 +163,28 @@ function showSection(sectionId) {
     if (sectionId === 'inventory') renderInventory();
     if (sectionId === 'clients') renderClients(); // Add this line
 }
+function populateClientDropdown() {
+    const select = document.getElementById('clientName');
+    select.innerHTML = '<option value="">-- Select Client --</option>'; // Reset
+    clients.forEach(c => {
+        select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+    });
+}
+
+// Update your openModal function
+function openModal() { 
+    populateClientDropdown(); // Load clients before showing the modal
+    document.getElementById('docModal').style.display = 'flex'; 
+}function populateClientDropdown() {
+    const select = document.getElementById('clientName');
+    select.innerHTML = '<option value="">-- Select Client --</option>'; // Reset
+    clients.forEach(c => {
+        select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+    });
+}
+
+// Update your openModal function
+function openModal() { 
+    populateClientDropdown(); // Load clients before showing the modal
+    document.getElementById('docModal').style.display = 'flex'; 
+}
