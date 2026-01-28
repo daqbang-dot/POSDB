@@ -72,19 +72,32 @@ function renderInventory() {
 }
 
 function renderClients() {
-    const clientContainer = document.getElementById('clients');
+    const clientContainer = document.getElementById('clientList'); // We updated this ID
+    if (!clientContainer) return;
+
     clientContainer.innerHTML = `
-        <h1>Client Database</h1>
         <div class="table-container" style="margin-top: 20px;">
             <table>
-                <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    ${clients.map(c => `<tr><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td></tr>`).join('')}
+                    ${clients.map(c => `
+                        <tr>
+                            <td>${c.name}</td>
+                            <td>${c.email}</td>
+                            <td>${c.phone}</td>
+                        </tr>
+                    `).join('')}
                 </tbody>
             </table>
-        </div>`;
+        </div>
+    `;
 }
-
 // --- 5. DOCUMENT ACTIONS ---
 function createNewQuote() {
     const client = document.getElementById('clientName').value;
