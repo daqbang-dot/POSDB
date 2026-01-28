@@ -109,3 +109,40 @@ function closeModal() { document.getElementById('docModal').style.display = 'non
 
 // Run on load
 renderTable();
+function renderInventory() {
+    const invContainer = document.getElementById('inventoryList');
+    if (!invContainer) return;
+
+    invContainer.innerHTML = `
+        <div class="table-container" style="margin-top: 20px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${inventory.map(item => `
+                        <tr>
+                            <td>${item.name}</td>
+                            <td>$${item.price}</td>
+                            <td>${item.desc}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// Update your showSection function to refresh the inventory list when clicked
+function showSection(sectionId) {
+    document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
+    document.getElementById(sectionId).style.display = 'block';
+    
+    if(sectionId === 'inventory') {
+        renderInventory();
+    }
+}
