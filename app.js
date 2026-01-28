@@ -1,35 +1,41 @@
-// Initialize data from LocalStorage (or empty arrays if new)
+// 1. Data Initialization
 let documents = JSON.parse(localStorage.getItem('myDocs')) || [];
 let inventory = JSON.parse(localStorage.getItem('myInv')) || [
     { id: 1, name: "Service A", price: 500, desc: "Standard Consulting" }
 ];
 
-// Function to save everything to the browser's memory
+// 2. Core Functions
 function saveData() {
     localStorage.setItem('myDocs', JSON.stringify(documents));
     localStorage.setItem('myInv', JSON.stringify(inventory));
     renderTable();
 }
 
-// Function to switch between Dashboard, Inventory, and Clients
 function showSection(sectionId) {
     document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
     document.getElementById(sectionId).style.display = 'block';
 }
 
-// Function to display the documents in the HTML table
+// 3. Render Table (The "Smart" Version)
 function renderTable() {
     const tbody = document.getElementById('docListBody');
+    if (!tbody) return;
     tbody.innerHTML = ''; 
 
-    documents.forEach(doc => {
-        // Decide which button to show based on type
-        let actionButton = '';
+    documents.forEach((doc, index) => {
+        let buttons = '';
+        
+        // Show "Convert" only for Quotations
         if (doc.type === 'Quotation') {
-            actionButton = `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
-        } else if (doc.type === 'Invoice' && doc.status !== 'Paid') {
-            actionButton = `<button class="btn-sm success" onclick="markAsPaid('${doc.id}')">Mark Paid</button>`;
+            buttons += `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
+        } 
+        
+        // Show "Mark Paid" only for Pending Invoices
+        if (doc.type === 'Invoice' && doc.status === 'Pending') {
+            buttons += `<button class="btn-sm success" onclick="markAsPaid('${doc.id}')">Mark Paid</button>`;
         }
+
+        buttons += `<button class="btn-sm danger" onclick="deleteDoc(${index})">Delete</button>`;
 
         tbody.innerHTML += `
             <tr>
@@ -38,25 +44,19 @@ function renderTable() {
                 <td>${doc.clientName}</td>
                 <td><span class="badge">${doc.type}</span></td>
                 <td><span class="status-${doc.status.toLowerCase()}">${doc.status}</span></td>
-                <td>${actionButton}</td>
+                <td><div class="action-gap">${buttons}</div></td>
             </tr>
         `;
     });
 }
-// Run this when the page loads
-renderTable();
-function openModal() {
-    document.getElementById('docModal').style.display = 'flex';
-}
 
-function closeModal() {
-    document.getElementById('docModal').style.display = 'none';
-}
-
+// 4. Document Actions
 function createNewQuote() {
     const client = document.getElementById('clientName').value;
     const item = document.getElementById('itemName').value;
     const price = document.getElementById('itemPrice').value;
+
+    if(!client || !item) return alert("Please fill in details");
 
     const newDoc = {
         id: 'QT-' + Math.floor(Math.random() * 1000),
@@ -67,31 +67,27 @@ function createNewQuote() {
         items: [{ name: item, price: price }]
     };
 
-    documents.push(newDoc); // Add to our list
-    saveData();             // Save to LocalStorage and Refresh table
-    closeModal();           // Hide popup
+    documents.push(newDoc);
+    saveData();
+    closeModal();
 }
+
 function convertToInvoice(quoteId) {
-    // 1. Find the original quotation
-    const quoteIndex = documents.findIndex(d => d.id === quoteId);
-    if (quoteIndex === -1) return;
+    const quote = documents.find(d => d.id === quoteId);
+    if (!quote) return;
 
-    const quote = documents[quoteIndex];
-
-    // 2. Create the new Invoice based on the Quote data
     const newInvoice = {
-        ...quote, // Copy all data (client, items, etc.)
-        id: quote.id.replace('QT-', 'INV-'), // Change ID prefix
+        ...quote,
+        id: quote.id.replace('QT-', 'INV-'),
         type: 'Invoice',
         date: new Date().toLocaleDateString(),
         status: 'Pending'
     };
 
-    // 3. Add to our list and save
     documents.push(newInvoice);
     saveData();
-    alert(`Success! ${quoteId} has been converted to ${newInvoice.id}`);
 }
+
 function markAsPaid(docId) {
     const doc = documents.find(d => d.id === docId);
     if (doc) {
@@ -99,3 +95,17 @@ function markAsPaid(docId) {
         saveData();
     }
 }
+
+function deleteDoc(index) {
+    if(confirm("Delete this document?")) {
+        documents.splice(index, 1);
+        saveData();
+    }
+}
+
+// 5. Modal Controls
+function openModal() { document.getElementById('docModal').style.display = 'flex'; }
+function closeModal() { document.getElementById('docModal').style.display = 'none'; }
+
+// Run on load
+renderTable();
