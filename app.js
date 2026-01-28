@@ -146,3 +146,16 @@ function showSection(sectionId) {
         renderInventory();
     }
 }
+function downloadInventoryReport() {
+    let csv = "Item Name,Price,Description\n";
+    inventory.forEach(item => {
+        csv += `${item.name},${item.price},"${item.desc}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'inventory_report.csv';
+    a.click();
+}
