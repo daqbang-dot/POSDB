@@ -1,7 +1,8 @@
 // 1. Data Initialization
 let documents = JSON.parse(localStorage.getItem('myDocs')) || [];
 let inventory = JSON.parse(localStorage.getItem('myInv')) || [
-    { id: 1, name: "Service A", price: 500, desc: "Standard Consulting" }
+    { id: 1, name: "Widget A", price: 100, desc: "High quality widget" },
+    { id: 2, name: "Service B", price: 500, desc: "Consulting per hour" }
 ];
 
 // 2. Core Functions
@@ -11,12 +12,17 @@ function saveData() {
     renderTable();
 }
 
+// Updated showSection to also refresh Inventory list
 function showSection(sectionId) {
     document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
     document.getElementById(sectionId).style.display = 'block';
+    
+    if (sectionId === 'inventory') {
+        renderInventory();
+    }
 }
 
-// 3. Render Table (The "Smart" Version)
+// 3. Render Table
 function renderTable() {
     const tbody = document.getElementById('docListBody');
     if (!tbody) return;
@@ -24,17 +30,12 @@ function renderTable() {
 
     documents.forEach((doc, index) => {
         let buttons = '';
-        
-        // Show "Convert" only for Quotations
         if (doc.type === 'Quotation') {
             buttons += `<button class="btn-sm" onclick="convertToInvoice('${doc.id}')">Convert to Inv</button>`;
         } 
-        
-        // Show "Mark Paid" only for Pending Invoices
         if (doc.type === 'Invoice' && doc.status === 'Pending') {
             buttons += `<button class="btn-sm success" onclick="markAsPaid('${doc.id}')">Mark Paid</button>`;
         }
-
         buttons += `<button class="btn-sm danger" onclick="deleteDoc(${index})">Delete</button>`;
 
         tbody.innerHTML += `
@@ -50,7 +51,41 @@ function renderTable() {
     });
 }
 
-// 4. Document Actions
+// 4. Inventory Management
+function renderInventory() {
+    const invContainer = document.getElementById('inventoryList');
+    if (!invContainer) return;
+
+    invContainer.innerHTML = `
+        <div class="table-container" style="margin-top: 20px;">
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Price</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    ${inventory.map(item => `
+                        <tr><td>${item.name}</td><td>$${item.price}</td><td>${item.desc}</td></tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function downloadInventoryReport() {
+    let csv = "Item Name,Price,Description\n";
+    inventory.forEach(item => {
+        csv += `${item.name},${item.price},"${item.desc}"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'inventory_report.csv';
+    a.click();
+}
+
+// 5. Document Actions
 function createNewQuote() {
     const client = document.getElementById('clientName').value;
     const item = document.getElementById('itemName').value;
@@ -75,87 +110,22 @@ function createNewQuote() {
 function convertToInvoice(quoteId) {
     const quote = documents.find(d => d.id === quoteId);
     if (!quote) return;
-
-    const newInvoice = {
-        ...quote,
-        id: quote.id.replace('QT-', 'INV-'),
-        type: 'Invoice',
-        date: new Date().toLocaleDateString(),
-        status: 'Pending'
-    };
-
+    const newInvoice = {...quote, id: quote.id.replace('QT-', 'INV-'), type: 'Invoice', status: 'Pending'};
     documents.push(newInvoice);
     saveData();
 }
 
 function markAsPaid(docId) {
     const doc = documents.find(d => d.id === docId);
-    if (doc) {
-        doc.status = 'Paid';
-        saveData();
-    }
+    if (doc) { doc.status = 'Paid'; saveData(); }
 }
 
 function deleteDoc(index) {
-    if(confirm("Delete this document?")) {
-        documents.splice(index, 1);
-        saveData();
-    }
+    if(confirm("Delete this?")) { documents.splice(index, 1); saveData(); }
 }
 
-// 5. Modal Controls
+// 6. Modal Controls
 function openModal() { document.getElementById('docModal').style.display = 'flex'; }
 function closeModal() { document.getElementById('docModal').style.display = 'none'; }
 
-// Run on load
 renderTable();
-function renderInventory() {
-    const invContainer = document.getElementById('inventoryList');
-    if (!invContainer) return;
-
-    invContainer.innerHTML = `
-        <div class="table-container" style="margin-top: 20px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Item Name</th>
-                        <th>Price</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${inventory.map(item => `
-                        <tr>
-                            <td>${item.name}</td>
-                            <td>$${item.price}</td>
-                            <td>${item.desc}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
-
-// Update your showSection function to refresh the inventory list when clicked
-function showSection(sectionId) {
-    document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
-    document.getElementById(sectionId).style.display = 'block';
-    
-    if(sectionId === 'inventory') {
-        renderInventory();
-    }
-}
-function downloadInventoryReport() {
-    let csv = "Item Name,Price,Description\n";
-    inventory.forEach(item => {
-        csv += `${item.name},${item.price},"${item.desc}"\n`;
-    });
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'inventory_report.csv';
-    a.click();
-}
